@@ -52,3 +52,42 @@ export interface ApiResponse<T = void> {
   data?: T
   error?: string
 }
+
+// Notes types
+export interface Notes {
+  name: string
+  content: string
+}
+
+export interface AddNotesRequest {
+  user: string
+  name: string
+  content: string
+}
+
+export interface RemoveNotesRequest {
+  user: string
+  name: string
+}
+
+export interface NotesToFlashCardsRequest {
+  user: string
+  name: string
+}
+
+export interface NotesToFlashCardsResponse {
+  flashcards: Card[]
+}
+
+export interface GetUserNotesRequest {
+  user: string
+}
+
+export interface GetNotesRequest {
+  user: string
+  name: string
+}
+
+export interface GetNotesResponse {
+  content: string
+}

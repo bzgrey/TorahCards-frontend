@@ -196,7 +196,7 @@
 **Request Body:**
 ```json
 {
-  "user": "User",
+  "user": "string",
   "name": "string"
 }
 ```
@@ -205,8 +205,12 @@
 ```json
 [
   {
-    "question": "string",
-    "answer": "string"
+    "user": "string",
+    "name": "string",
+    "cards": [{
+      "question": "string",
+      "answer": "string"
+    }]
   }
 ]
 ```

@@ -1,23 +1,22 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import ViewFlashcards from './views/ViewFlashcards.vue'
-import DemoFlashcards from './views/DemoFlashcards.vue'
+import ViewNotes from './views/ViewNotes.vue'
 // import Home from './views/Home.vue'
 // import Search from './views/Search.vue'
 // import ViewFlashcard from './views/ViewFlashcard.vue'
-// import ViewNote from './views/ViewNote.vue'
 // import EditFlashcard from './views/EditFlashcard.vue'
 // import EditNote from './views/EditNote.vue'
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
-    name: 'Demo',
-    component: DemoFlashcards
-  },
-  {
     path: '/flashcards/:id',
     name: 'ViewFlashcards',
     component: ViewFlashcards
+  },
+  {
+    path: '/notes/:id',
+    name: 'ViewNotes',
+    component: ViewNotes
   }
   // {
   //   path: '/',
