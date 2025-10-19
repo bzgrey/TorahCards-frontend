@@ -1,0 +1,43 @@
+{
+  "hash": "cc9c96a6",
+  "configHash": "29d4065a",
+  "lockfileHash": "e3b0c442",
+  "browserHash": "724af63c",
+  "optimized": {
+    "vue": {
+      "src": "../../node_modules/.deno/vue@3.5.22/node_modules/vue/dist/vue.runtime.esm-bundler.js",
+      "file": "vue.js",
+      "fileHash": "fd1dc361",
+      "needsInterop": false
+    },
+    "vue-router": {
+      "src": "../../node_modules/.deno/vue-router@4.6.3/node_modules/vue-router/dist/vue-router.mjs",
+      "file": "vue-router.js",
+      "fileHash": "b0e36415",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/.deno/axios@1.12.2/node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "1f7e832a",
+      "needsInterop": false
+    },
+    "pinia": {
+      "src": "../../node_modules/.deno/pinia@2.3.1/node_modules/pinia/dist/pinia.mjs",
+      "file": "pinia.js",
+      "fileHash": "09b23a48",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-PVU3EYJK": {
+      "file": "chunk-PVU3EYJK.js"
+    },
+    "chunk-AZVCHO25": {
+      "file": "chunk-AZVCHO25.js"
+    },
+    "chunk-PZ5AY32C": {
+      "file": "chunk-PZ5AY32C.js"
+    }
+  }
+}
