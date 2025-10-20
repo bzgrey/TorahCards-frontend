@@ -151,15 +151,12 @@ const handleUpdateName = async (newName: string) => {
 }
 
 const handleConvertToFlashcards = async () => {
-  console.log('Converting note to flashcards...')
   if (!currentNote.value) return
-  console.log('Converting note to flashcards 2...')
 
   const flashcards = await notesStore.convertNotesToFlashCards(
     username.value,
     noteName.value
   )
-  console.log('Flashcards generated:', flashcards);
   if (flashcards && flashcards.length > 0) {
     generatedFlashcards.value = flashcards
     flashcardSetName.value = `${noteName.value} - Flashcards`
