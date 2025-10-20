@@ -2,7 +2,7 @@
   <div class="note-item">
     <div class="note-header">
       <div class="title-section">
-        <h3 v-if="!isEditingTitle">{{ note.name }}</h3>
+        <h3 v-if="!isEditingTitle || readOnly">{{ note.name }}</h3>
         <input
           v-else
           v-model="editedName"
@@ -11,12 +11,13 @@
           @blur="saveTitle"
           @keyup.enter="saveTitle"
         />
-        <button @click="toggleTitleEdit" class="btn-icon">
+        <button v-if="!readOnly" @click="toggleTitleEdit" class="btn-icon">
           {{ isEditingTitle ? '✓' : '✏️' }}
         </button>
       </div>
       <div class="note-meta">
         {{ contentLength }} characters
+        <span v-if="readOnly" class="read-only-badge">👁️ Read-Only</span>
       </div>
     </div>
 
@@ -35,7 +36,7 @@
       </div>
     </div>
 
-    <div class="note-actions">
+    <div class="note-actions" v-if="!readOnly">
       <button v-if="!isEditing" @click="startEdit" class="btn btn-edit">
         ✏️ Edit Content
       </button>
@@ -63,6 +64,10 @@ const props = defineProps({
   note: {
     type: Object as PropType<Notes>,
     required: true
+  },
+  readOnly: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -186,6 +191,18 @@ const handleConvertToFlashcards = () => {
 .note-meta {
   color: #6c757d;
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.read-only-badge {
+  background: #ffc107;
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .note-content {

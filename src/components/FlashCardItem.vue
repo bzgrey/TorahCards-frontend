@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <div class="card-actions">
+    <div class="card-actions" v-if="!readOnly">
       <button v-if="!isEditing" @click.stop="startEdit" class="btn btn-edit">
         ✏️ Edit
       </button>
@@ -61,6 +61,10 @@ const props = defineProps({
   cardIndex: {
     type: Number,
     required: true
+  },
+  readOnly: {
+    type: Boolean,
+    default: false
   }
 })
 

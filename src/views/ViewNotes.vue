@@ -10,10 +10,11 @@
     <NoteItem
       v-else
       :note="currentNote"
+      :read-only="isReadOnly"
       @update="handleUpdate"
       @remove="handleDelete"
       @update-name="handleUpdateName"
-      @convert-to-flashcards="handleConvertToFlashcards"
+      @convertToFlashcards="handleConvertToFlashcards"
     />
 
     <!-- Flashcards Modal -->
@@ -89,6 +90,10 @@ const noteName = computed(() => notesStore.currentNoteName)
 // Get user - use mock user if not authenticated
 const username = computed(() => userStore.currentUser?.username || 'testUser')
 
+// Get the owner from query params if viewing another user's note
+const noteOwner = computed(() => (route.query.user as string) || username.value)
+const isReadOnly = computed(() => noteOwner.value !== username.value)
+
 const handleUpdate = async (name: string, content: string) => {
   try {
     const success = await notesStore.updateNote(username.value, name, content)
@@ -98,7 +103,6 @@ const handleUpdate = async (name: string, content: string) => {
       return
     }
     
-    alert('Note updated successfully!')
     // Reload the note
     await loadNote()
   } catch (err) {
@@ -113,7 +117,6 @@ const handleDelete = async () => {
     if (!success) {
       alert(`Error: ${notesStore.error}`)
     } else {
-      alert('Note deleted!')
       router.push('/')
     }
   } catch (err) {
@@ -140,7 +143,6 @@ const handleUpdateName = async (newName: string) => {
       return
     }
     
-    alert('Note name updated successfully!')
     // Navigate to the new note name
     router.push(`/notes/${newName}`)
   } catch (err) {
@@ -149,13 +151,15 @@ const handleUpdateName = async (newName: string) => {
 }
 
 const handleConvertToFlashcards = async () => {
+  console.log('Converting note to flashcards...')
   if (!currentNote.value) return
-  
+  console.log('Converting note to flashcards 2...')
+
   const flashcards = await notesStore.convertNotesToFlashCards(
     username.value,
     noteName.value
   )
-  
+  console.log('Flashcards generated:', flashcards);
   if (flashcards && flashcards.length > 0) {
     generatedFlashcards.value = flashcards
     flashcardSetName.value = `${noteName.value} - Flashcards`
@@ -176,10 +180,10 @@ const handleSaveFlashcards = async () => {
   )
   
   if (success) {
-    alert('Flashcards saved successfully!')
+    const flashCardsName = flashcardSetName.value.trim()
     closeFlashcardsModal()
     // navigate to the flashcards view
-    router.push(`/flashcards/${flashcardSetName.value}`)
+    router.push(`/flashcards/${flashCardsName}`)
   } else {
     alert(`Error: ${flashcardsStore.error}`)
   }
@@ -200,8 +204,8 @@ const loadNote = async () => {
   // Get the note name from route params
   const noteNameParam = route.params.id as string || 'Note'
 
-  // Fetch note from store
-  await notesStore.fetchNote(username.value, noteNameParam)  
+  // Fetch note from store using the note owner (could be current user or another user)
+  await notesStore.fetchNote(noteOwner.value, noteNameParam)  
 }
 
 onMounted(() => {

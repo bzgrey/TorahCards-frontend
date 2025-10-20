@@ -76,7 +76,7 @@ export interface NotesToFlashCardsRequest {
 }
 
 export interface NotesToFlashCardsResponse {
-  flashcards: Card[]
+  cards: Card[]
 }
 
 export interface GetUserNotesRequest {

@@ -161,14 +161,15 @@ export const useNotesStore = defineStore('notes', () => {
     error.value = null
     
     try {
+      console.log('Converting notes to flashcards for user:', user, 'note name:', name);
       const result = await NotesAPI.notesToFlashCards({ user, name })
-      
+      console.log('Conversion result:', result);
       if (result.error) {
         error.value = result.error
         return null
       }
       
-      return result.data?.flashcards || null
+      return result.data?.cards || null
     } catch (_err) {
       error.value = 'Failed to convert notes to flashcards'
       return null

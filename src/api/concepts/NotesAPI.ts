@@ -65,6 +65,7 @@ export const NotesAPI = {
         '/api/Notes/notesToFlashCards',
         request
       )
+      console.log('API response data:', response.data);
       return { data: response.data }
     } catch (error) {
       if (axios.isAxiosError(error)) {

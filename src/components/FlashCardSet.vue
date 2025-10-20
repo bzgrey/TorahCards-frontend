@@ -2,7 +2,7 @@
   <div class="flashcard-set">
     <div class="set-header">
       <div class="title-section">
-        <h2 v-if="!isEditingTitle">{{ setName }}</h2>
+        <h2 v-if="!isEditingTitle || readOnly">{{ setName }}</h2>
         <input
           v-else
           v-model="editedSetName"
@@ -11,12 +11,13 @@
           @blur="saveTitle"
           @keyup.enter="saveTitle"
         />
-        <button @click="toggleTitleEdit" class="btn-icon">
+        <button v-if="!readOnly" @click="toggleTitleEdit" class="btn-icon">
           {{ isEditingTitle ? '✓' : '✏️' }}
         </button>
       </div>
       <div class="set-meta">
         {{ cards.length }} card{{ cards.length !== 1 ? 's' : '' }}
+        <span v-if="readOnly" class="read-only-badge">Read-Only</span>
       </div>
     </div>
 
@@ -26,12 +27,13 @@
         :key="`card-${index}`"
         :card="card"
         :card-index="index"
+        :read-only="readOnly"
         @update="updateCard"
         @remove="removeCard"
       />
     </div>
 
-    <div class="add-card-section">
+    <div class="add-card-section" v-if="!readOnly">
       <button v-if="!showAddForm" @click="showAddForm = true" class="btn btn-add-card">
         ➕ Add New Card
       </button>
@@ -65,7 +67,7 @@
       </div>
     </div>
 
-    <div class="set-actions">
+    <div class="set-actions" v-if="!readOnly">
       <button @click="handleSave" class="btn btn-primary" :disabled="saving">
         {{ saving ? 'Saving...' : '💾 Save All Changes' }}
       </button>
@@ -89,6 +91,10 @@ const props = defineProps({
   initialCards: {
     type: Array as PropType<Card[]>,
     default: () => []
+  },
+  readOnly: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -217,6 +223,18 @@ const handleDelete = () => {
 .set-meta {
   color: #666;
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.read-only-badge {
+  background: #ffc107;
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .cards-grid {
