@@ -91,3 +91,39 @@ export interface GetNotesRequest {
 export interface GetNotesResponse {
   content: string
 }
+
+// Labeling types
+export interface CreateLabelRequest {
+  name: string
+}
+
+export interface AddLabelRequest {
+  item: string
+  labelName: string
+}
+
+export interface DeleteLabelRequest {
+  item: string
+  labelName: string
+}
+
+export interface DeleteItemRequest {
+  item: string
+}
+
+export interface GetLabelItemsRequest {
+  labelName: string
+}
+
+export interface GetItemLabelsRequest {
+  item: string
+}
+
+export interface LabelItem {
+  item: string
+}
+
+export interface Label {
+  name: string
+}
+

@@ -107,9 +107,7 @@ const cancelEdit = () => {
 }
 
 const handleRemove = () => {
-  if (confirm('Are you sure you want to remove this card?')) {
-    emit('remove', props.cardIndex)
-  }
+  emit('remove', props.cardIndex)
 }
 </script>
 

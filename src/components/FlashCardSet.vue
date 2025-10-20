@@ -166,9 +166,7 @@ const handleSave = () => {
 }
 
 const handleDelete = () => {
-  if (confirm(`Are you sure you want to delete the entire "${props.setName}" flashcard set?`)) {
-    emit('delete')
-  }
+  emit('delete')
 }
 </script>
 
