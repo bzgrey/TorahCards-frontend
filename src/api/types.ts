@@ -48,6 +48,17 @@ export interface GetCardsRequest {
   name: string
 }
 
+export interface SearchFlashcardsRequest {
+  searchTerm: string
+}
+
+export interface SearchFlashcardsResult {
+  id: string
+  setOwner: string
+  name: string
+  cards: Card[]
+}
+
 export interface ApiResponse<T = void> {
   data?: T
   error?: string

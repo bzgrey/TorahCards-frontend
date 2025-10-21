@@ -6,6 +6,8 @@ import type {
   RemoveCardRequest,
   GetUserCardsRequest,
   GetCardsRequest,
+  SearchFlashcardsRequest,
+  SearchFlashcardsResult,
   FlashCards,
   ApiResponse
 } from '../types.ts'
@@ -115,6 +117,24 @@ export const FlashCardsAPI = {
         return { error: error.response?.data?.error || 'Failed to get cards' }
       }
       return { error: 'Failed to get cards' }
+    }
+  },
+
+  /**
+   * Searches for flashcard sets by name, ordered by relevance
+   */
+  async searchFlashcards(request: SearchFlashcardsRequest): Promise<ApiResponse<SearchFlashcardsResult[]>> {
+    try {
+      const response: AxiosResponse<SearchFlashcardsResult[]> = await api.post(
+        '/api/FlashCards/_searchFlashcards',
+        request
+      )
+      return { data: response.data }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return { error: error.response?.data?.error || 'Failed to search flashcards' }
+      }
+      return { error: 'Failed to search flashcards' }
     }
   }
 }
