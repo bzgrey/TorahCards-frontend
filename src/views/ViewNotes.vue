@@ -1,6 +1,6 @@
 <template>
   <div class="view-notes">
-    <div v-if="loading" class="loading">Loading note...</div>
+    <div v-if="loading" class="loading">Loading...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else-if="!currentNote" class="empty">
       <p>Note not found</p>
@@ -181,7 +181,7 @@ const handleConvertToFlashcards = async () => {
     user: userStore.userId,
     name: noteName.value
   })
-  
+  console.log(result);
   if (result.error) {
     alert(`Error: ${result.error}`)
   } else if (result.data?.cards && result.data.cards.length > 0) {
