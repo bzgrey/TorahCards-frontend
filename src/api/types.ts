@@ -127,3 +127,51 @@ export interface Label {
   name: string
 }
 
+// UserAuth types
+export interface RegisterRequest {
+  username: string
+  password: string
+}
+
+export interface RegisterResponse {
+  user: string
+  token: string
+}
+
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
+export interface LoginResponse {
+  token: string
+}
+
+export interface LogoutRequest {
+  token: string
+}
+
+export interface GetUsernamesRequest {
+  users: string[]
+}
+
+export interface GetUsernamesResponse {
+  username: string
+}
+
+export interface GetPasswordRequest {
+  user: string
+}
+
+export interface GetPasswordResponse {
+  password: string
+}
+
+export interface GetAuthenticatedUserRequest {
+  token: string
+}
+
+export interface GetAuthenticatedUserResponse {
+  user: string
+}
+

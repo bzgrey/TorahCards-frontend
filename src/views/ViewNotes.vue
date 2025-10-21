@@ -64,42 +64,52 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import NoteItem from '../components/NoteItem.vue'
-import { useNotesStore } from '../stores/notes'
-import { useFlashcardsStore } from '../stores/flashcards'
+import { NotesAPI } from '../api/concepts/NotesAPI'
+import { FlashCardsAPI } from '../api/concepts/FlashCardsAPI'
 import { useUserStore } from '../stores/user'
-import type { Card } from '../api/types.ts'
+import type { Card, Notes } from '../api/types.ts'
 
 const route = useRoute()
 const router = useRouter()
-const notesStore = useNotesStore()
-const flashcardsStore = useFlashcardsStore()
 const userStore = useUserStore()
 
 // State
+const currentNote = ref<Notes | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
 const showFlashcardsModal = ref(false)
 const generatedFlashcards = ref<Card[]>([])
 const flashcardSetName = ref('')
 const savingFlashcards = ref(false)
 
-// Use store state
-const loading = computed(() => notesStore.loading)
-const error = computed(() => notesStore.error)
-const currentNote = computed(() => notesStore.currentNote)
-const noteName = computed(() => notesStore.currentNoteName)
-
-// Get user - use mock user if not authenticated
-const username = computed(() => userStore.currentUser?.username || 'testUser')
+// Computed
+const noteName = computed(() => currentNote.value?.name || '')
+const username = computed(() => userStore.username || 'testUser')
 
 // Get the owner from query params if viewing another user's note
 const noteOwner = computed(() => (route.query.user as string) || username.value)
 const isReadOnly = computed(() => noteOwner.value !== username.value)
 
 const handleUpdate = async (name: string, content: string) => {
+  if (!userStore.userId) return
+  
   try {
-    const success = await notesStore.updateNote(username.value, name, content)
+    loading.value = true
+    error.value = null
     
-    if (!success) {
-      alert(`Error updating note: ${notesStore.error}`)
+    // Remove old note
+    const removeResult = await NotesAPI.removeNotes({ user: userStore.userId, name })
+    if (removeResult.error) {
+      error.value = removeResult.error
+      alert(`Error updating note: ${removeResult.error}`)
+      return
+    }
+    
+    // Add updated note
+    const addResult = await NotesAPI.addNotes({ user: userStore.userId, name, content })
+    if (addResult.error) {
+      error.value = addResult.error
+      alert(`Error updating note: ${addResult.error}`)
       return
     }
     
@@ -107,39 +117,50 @@ const handleUpdate = async (name: string, content: string) => {
     await loadNote()
   } catch (err) {
     alert('Failed to update note')
+  } finally {
+    loading.value = false
   }
 }
 
 const handleDelete = async () => {
+  if (!userStore.userId || !noteName.value) return
+  
   try {
-    const success = await notesStore.removeNote(username.value, noteName.value)
+    loading.value = true
+    const result = await NotesAPI.removeNotes({ user: userStore.userId, name: noteName.value })
     
-    if (!success) {
-      alert(`Error: ${notesStore.error}`)
+    if (result.error) {
+      alert(`Error: ${result.error}`)
     } else {
       router.push('/')
     }
   } catch (err) {
     alert('Failed to delete note')
+  } finally {
+    loading.value = false
   }
 }
 
 const handleUpdateName = async (newName: string) => {
+  if (!userStore.userId || !currentNote.value) return
+  
   try {
     const oldName = noteName.value
-    const content = currentNote.value?.content || ''
+    const content = currentNote.value.content || ''
+    
+    loading.value = true
     
     // Add new note
-    const addSuccess = await notesStore.addNote(username.value, newName, content)
-    if (!addSuccess) {
-      alert(`Error: ${notesStore.error}`)
+    const addResult = await NotesAPI.addNotes({ user: userStore.userId, name: newName, content })
+    if (addResult.error) {
+      alert(`Error: ${addResult.error}`)
       return
     }
     
     // Remove old note
-    const removeSuccess = await notesStore.removeNote(username.value, oldName)
-    if (!removeSuccess) {
-      alert(`Error: ${notesStore.error}`)
+    const removeResult = await NotesAPI.removeNotes({ user: userStore.userId, name: oldName })
+    if (removeResult.error) {
+      alert(`Error: ${removeResult.error}`)
       return
     }
     
@@ -147,42 +168,50 @@ const handleUpdateName = async (newName: string) => {
     router.push(`/notes/${newName}`)
   } catch (err) {
     alert('Failed to update note name')
+  } finally {
+    loading.value = false
   }
 }
 
 const handleConvertToFlashcards = async () => {
-  if (!currentNote.value) return
+  if (!currentNote.value || !userStore.userId) return
 
-  const flashcards = await notesStore.convertNotesToFlashCards(
-    username.value,
-    noteName.value
-  )
-  if (flashcards && flashcards.length > 0) {
-    generatedFlashcards.value = flashcards
+  loading.value = true
+  const result = await NotesAPI.notesToFlashCards({
+    user: userStore.userId,
+    name: noteName.value
+  })
+  
+  if (result.error) {
+    alert(`Error: ${result.error}`)
+  } else if (result.data?.cards && result.data.cards.length > 0) {
+    generatedFlashcards.value = result.data.cards
     flashcardSetName.value = `${noteName.value} - Flashcards`
     showFlashcardsModal.value = true
   } else {
-    alert(`Error: ${notesStore.error || 'No flashcards generated'}`)
+    alert('No flashcards generated')
   }
+  
+  loading.value = false
 }
 
 const handleSaveFlashcards = async () => {
-  if (!flashcardSetName.value.trim() || generatedFlashcards.value.length === 0) return
+  if (!flashcardSetName.value.trim() || generatedFlashcards.value.length === 0 || !userStore.userId) return
   
   savingFlashcards.value = true
-  const success = await flashcardsStore.addFlashcardSet(
-    username.value,
-    flashcardSetName.value.trim(),
-    generatedFlashcards.value
-  )
+  const result = await FlashCardsAPI.addFlashCards({
+    user: userStore.userId,
+    name: flashcardSetName.value.trim(),
+    cards: generatedFlashcards.value
+  })
   
-  if (success) {
+  if (result.error) {
+    alert(`Error: ${result.error}`)
+  } else {
     const flashCardsName = flashcardSetName.value.trim()
     closeFlashcardsModal()
     // navigate to the flashcards view
     router.push(`/flashcards/${flashCardsName}`)
-  } else {
-    alert(`Error: ${flashcardsStore.error}`)
   }
   
   savingFlashcards.value = false
@@ -195,14 +224,31 @@ const closeFlashcardsModal = () => {
 }
 
 const loadNote = async () => {
+  if (!userStore.userId) return
+  
   // Clear any previous errors
-  notesStore.clearError()
+  error.value = null
   
   // Get the note name from route params
   const noteNameParam = route.params.id as string || 'Note'
 
-  // Fetch note from store using the note owner (could be current user or another user)
-  await notesStore.fetchNote(noteOwner.value, noteNameParam)  
+  loading.value = true
+  // Fetch note from API
+  const result = await NotesAPI.getNotes({ 
+    user: userStore.userId, 
+    name: noteNameParam 
+  })
+  
+  if (result.error) {
+    error.value = result.error
+  } else if (result.data) {
+    currentNote.value = {
+      name: noteNameParam,
+      content: result.data.content
+    }
+  }
+  
+  loading.value = false
 }
 
 onMounted(() => {

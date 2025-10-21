@@ -20,99 +20,120 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FlashCardSet from '../components/FlashCardSet.vue'
-import { useFlashcardsStore } from '../stores/flashcards'
+import { FlashCardsAPI } from '../api/concepts/FlashCardsAPI'
 import { useUserStore } from '../stores/user'
 import type { Card } from '../api/types.ts'
 
 const route = useRoute()
 const router = useRouter()
-const flashcardsStore = useFlashcardsStore()
 const userStore = useUserStore()
 
-// Use store state
-const loading = computed(() => flashcardsStore.loading)
-const error = computed(() => flashcardsStore.error)
-const setName = computed(() => flashcardsStore.currentSetName)
-const cards = computed(() => flashcardsStore.currentCards)
+// State
+const loading = ref(false)
+const error = ref<string | null>(null)
+const setName = ref('')
+const cards = ref<Card[]>([])
 
 // Get user - use mock user if not authenticated
-const username = computed(() => userStore.currentUser?.username || 'testUser')
+const username = computed(() => userStore.username || 'testUser')
 
 // Get the owner from query params if viewing another user's flashcards
 const setOwner = computed(() => (route.query.user as string) || username.value)
 const isReadOnly = computed(() => setOwner.value !== username.value)
 
 const handleSave = async (name: string, updatedCards: Card[]) => {
+  if (!userStore.userId) return
+  
   try {
-    // TODO: Implement proper update API endpoint
-    // For now, we'll remove and re-add the flashcard set
-    // First remove the old set
-    const removeSuccess = await flashcardsStore.removeFlashcardSet(
-      username.value, 
-      setName.value
-    )
+    loading.value = true
+    error.value = null
     
-    if (!removeSuccess) {
-      alert(`Error saving: ${flashcardsStore.error}`)
+    // Remove the old set
+    const removeResult = await FlashCardsAPI.removeFlashCards({
+      user: userStore.userId,
+      name: setName.value
+    })
+    
+    if (removeResult.error) {
+      alert(`Error saving: ${removeResult.error}`)
       return
     }
     
-    // Then add the updated set
-    const addSuccess = await flashcardsStore.addFlashcardSet(
-      username.value,
+    // Add the updated set
+    const addResult = await FlashCardsAPI.addFlashCards({
+      user: userStore.userId,
       name,
-      updatedCards
-    )
+      cards: updatedCards
+    })
     
-    if (!addSuccess) {
-      alert(`Error saving: ${flashcardsStore.error}`)
+    if (addResult.error) {
+      alert(`Error saving: ${addResult.error}`)
     } else {
       // Reload the updated set
-      await flashcardsStore.fetchFlashcardSet(username.value, name)
+      await loadFlashcards(name)
     }
   } catch (err) {
     alert('Failed to save changes')
+  } finally {
+    loading.value = false
   }
 }
 
 const handleDelete = async () => {
+  if (!userStore.userId) return
+  
   try {
-    const success = await flashcardsStore.removeFlashcardSet(
-      username.value, 
-      setName.value
-    )
+    loading.value = true
+    const result = await FlashCardsAPI.removeFlashCards({
+      user: userStore.userId,
+      name: setName.value
+    })
     
-    if (!success) {
-      alert(`Error: ${flashcardsStore.error}`)
+    if (result.error) {
+      alert(`Error: ${result.error}`)
     } else {
       router.push('/')
     }
   } catch (err) {
     alert('Failed to delete set')
+  } finally {
+    loading.value = false
   }
 }
 
 const handleUpdateSetName = async (newName: string) => {
-  // TODO: Implement API call to update set name on backend
+  // Update local state
+  setName.value = newName
   console.log('Set name updated to:', newName)
-  // For now, we could update the current set in the store
-  if (flashcardsStore.currentFlashcardSet) {
-    flashcardsStore.currentFlashcardSet.name = newName
-  }
 }
 
-const loadFlashcards = async () => {
-  // Clear any previous errors
-  flashcardsStore.clearError()
+const loadFlashcards = async (nameParam?: string) => {
+  if (!userStore.userId) return
   
-  // Get the set name from route params
-  const setNameParam = route.params.id as string || 'Flashcard Set'
+  // Clear any previous errors
+  error.value = null
+  
+  // Get the set name from route params or use the provided one
+  const setNameParam = nameParam || (route.params.id as string) || 'Flashcard Set'
 
-  // Fetch cards from store using the set owner (could be current user or another user)
-  await flashcardsStore.fetchFlashcardSet(setOwner.value, setNameParam)  
+  loading.value = true
+  // Fetch cards from API
+  const result = await FlashCardsAPI.getCards({
+    user: userStore.userId,
+    name: setNameParam
+  })
+  
+  if (result.error) {
+    error.value = result.error
+  } else if (result.data) {
+    setName.value = setNameParam
+    cards.value = result.data.cards || []
+  }
+  
+  loading.value = false
 }
 
 onMounted(() => {

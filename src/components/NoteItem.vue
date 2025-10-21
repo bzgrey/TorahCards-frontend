@@ -120,9 +120,7 @@ const cancelEdit = () => {
 }
 
 const handleRemove = () => {
-  if (confirm(`Are you sure you want to delete the note "${props.note.name}"?`)) {
-    emit('remove')
-  }
+  emit('remove');
 }
 
 const handleConvertToFlashcards = () => {

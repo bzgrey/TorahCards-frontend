@@ -152,13 +152,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useNotesStore } from '../stores/notes'
-import { useFlashcardsStore } from '../stores/flashcards'
+import { NotesAPI } from '../api/concepts/NotesAPI'
+import { FlashCardsAPI } from '../api/concepts/FlashCardsAPI'
 import { useUserStore } from '../stores/user'
+import type { Notes, FlashCards } from '../api/types'
 
 const router = useRouter()
-const notesStore = useNotesStore()
-const flashcardsStore = useFlashcardsStore()
 const userStore = useUserStore()
 
 // State
@@ -167,15 +166,17 @@ const showCreateFlashcardModal = ref(false)
 const newNoteName = ref('')
 const newNoteContent = ref('')
 const newSetName = ref('')
+const allNotes = ref<Notes[]>([])
+const allFlashcards = ref<FlashCards[]>([])
+const notesLoading = ref(false)
+const notesError = ref<string | null>(null)
+const flashcardsLoading = ref(false)
+const flashcardsError = ref<string | null>(null)
 
 // Computed
-const username = computed(() => userStore.currentUser?.username || 'testUser')
-const myNotes = computed(() => notesStore.allNotes)
-const myFlashcards = computed(() => flashcardsStore.allFlashcards)
-const notesLoading = computed(() => notesStore.loading)
-const flashcardsLoading = computed(() => flashcardsStore.loading)
-const notesError = computed(() => notesStore.error)
-const flashcardsError = computed(() => flashcardsStore.error)
+const username = computed(() => userStore.username || 'testUser')
+const myNotes = computed(() => allNotes.value)
+const myFlashcards = computed(() => allFlashcards.value)
 
 // Methods
 const getPreview = (content: string) => {
@@ -210,50 +211,91 @@ const closeCreateFlashcardModal = () => {
   newSetName.value = ''
 }
 
+const fetchUserNotes = async () => {
+  if (!userStore.userId) return
+  
+  notesLoading.value = true
+  notesError.value = null
+  
+  const result = await NotesAPI.getUserNotes({ user: userStore.userId })
+  
+  if (result.error) {
+    notesError.value = result.error
+  } else if (result.data) {
+    allNotes.value = result.data
+  }
+  
+  notesLoading.value = false
+}
+
+const fetchUserFlashcards = async () => {
+  if (!userStore.userId) return
+  
+  flashcardsLoading.value = true
+  flashcardsError.value = null
+  
+  const result = await FlashCardsAPI.getUserCards({ user: userStore.userId })
+  
+  if (result.error) {
+    flashcardsError.value = result.error
+  } else if (result.data) {
+    allFlashcards.value = result.data
+  }
+  
+  flashcardsLoading.value = false
+}
+
 const handleCreateNote = async () => {
-  if (!newNoteName.value.trim()) return
+  if (!newNoteName.value.trim() || !userStore.userId) return
   
-  const success = await notesStore.addNote(
-    username.value,
-    newNoteName.value.trim(),
-    newNoteContent.value
-  )
+  notesLoading.value = true
+  const result = await NotesAPI.addNotes({
+    user: userStore.userId,
+    name: newNoteName.value.trim(),
+    content: newNoteContent.value
+  })
   
-  if (success) {
-    const newNameTemp = newNoteName.value.trim();
+  if (result.error) {
+    alert(`Error creating note: ${result.error}`)
+  } else {
+    const newNameTemp = newNoteName.value.trim()
     closeCreateNoteModal()
+    await fetchUserNotes() // Refresh the list
     // Navigate to the new note
     router.push(`/notes/${newNameTemp}`)
-  } else {
-    alert(`Error creating note: ${notesStore.error}`)
   }
+  
+  notesLoading.value = false
 }
 
 const handleCreateFlashcardSet = async () => {
-  if (!newSetName.value.trim()) return
-  console.log('Flashcard set created:', newSetName.value.trim())
+  if (!newSetName.value.trim() || !userStore.userId) return
   
-  const success = await flashcardsStore.addFlashcardSet(
-    username.value,
-    newSetName.value.trim(),
-    []
-  )
+  flashcardsLoading.value = true
+  const result = await FlashCardsAPI.addFlashCards({
+    user: userStore.userId,
+    name: newSetName.value.trim(),
+    cards: []
+  })
   
-  if (success) {
+  if (result.error) {
+    alert(`Error creating flashcard set: ${result.error}`)
+  } else {
     const flashCardSetName = newSetName.value.trim()
     closeCreateFlashcardModal()
+    await fetchUserFlashcards() // Refresh the list
     // Navigate to the new flashcard set
     router.push(`/flashcards/${flashCardSetName}`)
-  } else {
-    alert(`Error creating flashcard set: ${flashcardsStore.error}`)
   }
+  
+  flashcardsLoading.value = false
 }
 
 const loadDashboardData = async () => {
   // Load user's notes and flashcards
   await Promise.all([
-    notesStore.fetchUserNotes(username.value),
-    flashcardsStore.fetchUserFlashcards(username.value)
+    fetchUserNotes(),
+    fetchUserFlashcards()
   ])
 }
 
