@@ -220,9 +220,10 @@ const handleCreateNote = async () => {
   )
   
   if (success) {
+    const newNameTemp = newNoteName.value.trim();
     closeCreateNoteModal()
     // Navigate to the new note
-    router.push(`/notes/${newNoteName.value.trim()}`)
+    router.push(`/notes/${newNameTemp}`)
   } else {
     alert(`Error creating note: ${notesStore.error}`)
   }
