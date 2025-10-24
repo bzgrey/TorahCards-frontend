@@ -249,15 +249,18 @@
 ```json
 [
   {
-    "id": "ID",
-    "setOwner": "User",
-    "name": "string",
-    "cards": [
-      {
-        "question": "string",
-        "answer": "string"
-      }
-    ]
+    "flashcards": {
+      "id": "string",
+      "setOwner": "string",
+      "name": "string",
+      "cards": [
+        {
+          "question": "string",
+          "answer": "string"
+        }
+      ]
+    },
+    "score": "number"
   }
 ]
 ```

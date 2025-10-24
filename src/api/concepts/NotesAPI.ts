@@ -7,6 +7,8 @@ import type {
   GetUserNotesRequest,
   GetNotesRequest,
   GetNotesResponse,
+  SearchNotesRequest,
+  SearchNotesResult,
   Notes,
   ApiResponse
 } from '../types.ts'
@@ -104,6 +106,24 @@ export const NotesAPI = {
         return { error: error.response?.data?.error || 'Failed to get notes' }
       }
       return { error: 'Failed to get notes' }
+    }
+  },
+
+  /**
+   * Searches for notes based on a provided term, returning an array of matching notes ordered by search score
+   */
+  async searchNotes(request: SearchNotesRequest): Promise<ApiResponse<SearchNotesResult[]>> {
+    try {
+      const response: AxiosResponse<SearchNotesResult[]> = await api.post(
+        '/api/Notes/_searchNotes',
+        request
+      )
+      return { data: response.data }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return { error: error.response?.data?.error || 'Failed to search notes' }
+      }
+      return { error: 'Failed to search notes' }
     }
   }
 }

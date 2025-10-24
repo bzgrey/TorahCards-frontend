@@ -87,8 +87,8 @@ const noteName = computed(() => currentNote.value?.name || '')
 const username = computed(() => userStore.username || 'testUser')
 
 // Get the owner from query params if viewing another user's note
-const noteOwner = computed(() => (route.query.user as string) || username.value)
-const isReadOnly = computed(() => noteOwner.value !== username.value)
+const noteOwner = computed(() => (route.query.user as string) ?? userStore.userId)
+const isReadOnly = computed(() => noteOwner.value !== userStore.userId && noteOwner.value !== username.value)
 
 const handleUpdate = async (name: string, content: string) => {
   if (!userStore.userId) return
@@ -235,7 +235,7 @@ const loadNote = async () => {
   loading.value = true
   // Fetch note from API
   const result = await NotesAPI.getNotes({ 
-    user: userStore.userId, 
+    user: noteOwner.value, 
     name: noteNameParam 
   })
   

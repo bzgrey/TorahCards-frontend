@@ -53,10 +53,13 @@ export interface SearchFlashcardsRequest {
 }
 
 export interface SearchFlashcardsResult {
-  id: string
-  setOwner: string
-  name: string
-  cards: Card[]
+    flashcardSet: {
+      id: string,
+      setOwner: string,
+      name: string,
+      cards: Card[]
+    },
+    score: number
 }
 
 export interface ApiResponse<T = void> {
@@ -101,6 +104,20 @@ export interface GetNotesRequest {
 
 export interface GetNotesResponse {
   content: string
+}
+
+export interface SearchNotesRequest {
+  searchTerm: string
+}
+
+export interface SearchNotesResult {
+  note: {
+    id: string
+    notesOwner: string
+    name: string
+    content: string
+  }
+  score: number
 }
 
 // Labeling types

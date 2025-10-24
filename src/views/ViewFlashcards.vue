@@ -41,8 +41,8 @@ const cards = ref<Card[]>([])
 const username = computed(() => userStore.username || 'testUser')
 
 // Get the owner from query params if viewing another user's flashcards
-const setOwner = computed(() => (route.query.user as string) || username.value)
-const isReadOnly = computed(() => setOwner.value !== username.value)
+const setOwner = computed(() => (route.query.user as string) ?? userStore.userId)
+const isReadOnly = computed(() => setOwner.value !== userStore.userId)
 
 const handleSave = async (name: string, updatedCards: Card[]) => {
   if (!userStore.userId) return
@@ -122,7 +122,7 @@ const loadFlashcards = async (nameParam?: string) => {
   loading.value = true
   // Fetch cards from API
   const result = await FlashCardsAPI.getCards({
-    user: userStore.userId,
+    user: setOwner.value,
     name: setNameParam
   })
   

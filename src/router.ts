@@ -4,7 +4,7 @@ import ViewHome from './views/ViewHome.vue'
 import ViewFlashcards from './views/ViewFlashcards.vue'
 import ViewNotes from './views/ViewNotes.vue'
 import ViewAuth from './views/ViewAuth.vue'
-// import Search from './views/Search.vue'
+import ViewSearch from './views/ViewSearch.vue'
 // import ViewFlashcard from './views/ViewFlashcard.vue'
 // import EditFlashcard from './views/EditFlashcard.vue'
 // import EditNote from './views/EditNote.vue'
@@ -33,12 +33,13 @@ const routes: RouteRecordRaw[] = [
     name: 'ViewNotes',
     component: ViewNotes,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: ViewSearch,
+    meta: { requiresAuth: true }
   }
-  // {
-  //   path: '/search',
-  //   name: 'Search',
-  //   component: Search
-  // },
 ]
 
 const router = createRouter({
