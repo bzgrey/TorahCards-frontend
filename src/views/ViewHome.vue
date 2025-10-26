@@ -68,22 +68,16 @@
       </section>
 
       <!-- Following Section (Placeholder) -->
-      <section class="content-section following-section">
-        <h2 class="section-title">👥 Following</h2>
-        
-        <div class="placeholder-card">
-          <div class="placeholder-icon">🚧</div>
-          <h3>Coming Soon!</h3>
-          <p>The following feature will allow you to:</p>
-          <ul class="feature-list">
-            <li>Follow other users</li>
-            <li>View their public notes and flashcards</li>
-            <li>Study from shared content (read-only)</li>
-            <li>Discover new study materials</li>
-          </ul>
-          <p class="placeholder-note">This feature is currently in development.</p>
-        </div>
-      </section>
+      <FollowingSection
+        :followed-notes="followedNotes"
+        :followed-flashcards="followedFlashcards"
+        :loading="followingLoading"
+        :error="followingError"
+        @view-note="viewFollowedNote"
+        @view-flashcard="viewFollowedFlashcard"
+        @unfollow-note="handleUnfollowNote"
+        @unfollow-flashcard="handleUnfollowFlashcard"
+      />
     </div>
 
     <!-- Create Note Modal -->
@@ -154,8 +148,10 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { NotesAPI } from '../api/concepts/NotesAPI'
 import { FlashCardsAPI } from '../api/concepts/FlashCardsAPI'
+import { FollowingAPI } from '../api/concepts/Following'
 import { useUserStore } from '../stores/user'
-import type { Notes, FlashCards } from '../api/types'
+import FollowingSection from '../components/FollowingSection.vue'
+import type { Notes, FlashCards, GetNotesInfoResponse, GetFlashcardInfoResponse } from '../api/types'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -172,6 +168,10 @@ const notesLoading = ref(false)
 const notesError = ref<string | null>(null)
 const flashcardsLoading = ref(false)
 const flashcardsError = ref<string | null>(null)
+const followingLoading = ref(false)
+const followingError = ref<string | null>(null)
+const followedNotes = ref<GetNotesInfoResponse[]>([])
+const followedFlashcards = ref<GetFlashcardInfoResponse[]>([])
 
 // Computed
 const username = computed(() => userStore.username || 'testUser')
@@ -291,11 +291,118 @@ const handleCreateFlashcardSet = async () => {
   flashcardsLoading.value = false
 }
 
+const fetchFollowedItems = async () => {
+  if (!userStore.userId) return
+  
+  followingLoading.value = true
+  followingError.value = null
+  
+  try {
+    // Get list of followed item IDs
+    const followedItemsResult = await FollowingAPI.getFollowedItems({ user: userStore.userId })
+    
+    if (followedItemsResult.error) {
+      followingError.value = followedItemsResult.error
+      followingLoading.value = false
+      return
+    }
+    
+    if (!followedItemsResult.data || followedItemsResult.data.length === 0) {
+      followedNotes.value = []
+      followedFlashcards.value = []
+      followingLoading.value = false
+      return
+    }
+    
+    const itemIds = followedItemsResult.data.map(item => item.item)
+    
+    // Fetch notes and flashcards info in parallel
+    const [notesResult, flashcardsResult] = await Promise.all([
+      NotesAPI.getNotesInfo({ noteIDs: itemIds }),
+      FlashCardsAPI.getFlashcardInfo({ flashcardsIDs: itemIds })
+    ])
+    
+    if (notesResult.error) {
+      console.error('Error fetching followed notes:', notesResult.error)
+    } else if (notesResult.data) {
+      followedNotes.value = notesResult.data
+    }
+    
+    if (flashcardsResult.error) {
+      console.error('Error fetching followed flashcards:', flashcardsResult.error)
+    } else if (flashcardsResult.data) {
+      followedFlashcards.value = flashcardsResult.data
+    }
+  } catch (error) {
+    followingError.value = 'Failed to load followed items'
+    console.error('Error fetching followed items:', error)
+  } finally {
+    followingLoading.value = false
+  }
+}
+
+const handleUnfollowNote = async (noteId: string) => {
+  if (!userStore.userId) return
+  
+  try {
+    const result = await FollowingAPI.unfollow({
+      user: userStore.userId,
+      item: noteId
+    })
+    
+    if (result.error) {
+      alert(`Failed to unfollow note: ${result.error}`)
+    } else {
+      // Remove from local list
+      followedNotes.value = followedNotes.value.filter(note => note.id !== noteId)
+    }
+  } catch (error) {
+    alert('An error occurred while unfollowing the note')
+    console.error('Unfollow error:', error)
+  }
+}
+
+const handleUnfollowFlashcard = async (flashcardId: string) => {
+  if (!userStore.userId) return
+  
+  try {
+    const result = await FollowingAPI.unfollow({
+      user: userStore.userId,
+      item: flashcardId
+    })
+    
+    if (result.error) {
+      alert(`Failed to unfollow flashcard: ${result.error}`)
+    } else {
+      // Remove from local list
+      followedFlashcards.value = followedFlashcards.value.filter(fc => fc.id !== flashcardId)
+    }
+  } catch (error) {
+    alert('An error occurred while unfollowing the flashcard')
+    console.error('Unfollow error:', error)
+  }
+}
+
+const viewFollowedNote = (note: GetNotesInfoResponse) => {
+  router.push({
+    path: `/notes/${note.name}`,
+    query: { user: note.user }
+  })
+}
+
+const viewFollowedFlashcard = (flashcard: GetFlashcardInfoResponse) => {
+  router.push({
+    path: `/flashcards/${flashcard.name}`,
+    query: { user: flashcard.user }
+  })
+}
+
 const loadDashboardData = async () => {
-  // Load user's notes and flashcards
+  // Load user's notes and flashcards, and followed notes and flashcards
   await Promise.all([
     fetchUserNotes(),
-    fetchUserFlashcards()
+    fetchUserFlashcards(),
+    fetchFollowedItems()
   ])
 }
 
@@ -482,62 +589,6 @@ onMounted(() => {
 .btn-secondary {
   background: #6c757d;
   color: white;
-}
-
-.following-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-.placeholder-card {
-  background: white;
-  border: 2px dashed #dee2e6;
-  border-radius: 12px;
-  padding: 40px;
-  text-align: center;
-}
-
-.placeholder-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-}
-
-.placeholder-card h3 {
-  color: #007bff;
-  margin: 0 0 16px 0;
-  font-size: 1.8rem;
-}
-
-.placeholder-card p {
-  color: #6c757d;
-  margin: 12px 0;
-  font-size: 1.1rem;
-}
-
-.feature-list {
-  text-align: left;
-  display: inline-block;
-  margin: 20px 0;
-  list-style-type: none;
-  padding: 0;
-}
-
-.feature-list li {
-  padding: 8px 0;
-  color: #495057;
-  font-size: 1.05rem;
-}
-
-.feature-list li::before {
-  content: "✓ ";
-  color: #28a745;
-  font-weight: bold;
-  margin-right: 8px;
-}
-
-.placeholder-note {
-  font-style: italic;
-  color: #adb5bd;
-  margin-top: 20px;
 }
 
 /* Modal Styles */

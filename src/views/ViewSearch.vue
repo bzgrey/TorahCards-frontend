@@ -32,7 +32,10 @@
             v-for="result in notesResults"
             :key="result.note.id"
             :note="result.note"
+            :is-following="followedItems.has(result.note.id)"
             @click="viewNote"
+            @follow="handleFollowNote"
+            @unfollow="handleUnfollowNote"
           />
         </SearchResultsColumn>
 
@@ -48,7 +51,10 @@
             v-for="result in flashcardsResults"
             :key="result.flashcardSet.id"
             :flashcard-set="result.flashcardSet"
+            :is-following="followedItems.has(result.flashcardSet.id)"
             @click="viewFlashcardSet"
+            @follow="handleFollowFlashcard"
+            @unfollow="handleUnfollowFlashcard"
           />
         </SearchResultsColumn>
       </div>
@@ -63,10 +69,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user'
 import { NotesAPI } from '../api/concepts/NotesAPI'
 import { FlashCardsAPI } from '../api/concepts/FlashCardsAPI'
+import { FollowingAPI } from '../api/concepts/Following'
 import SearchBar from '../components/search/SearchBar.vue'
 import SearchResultsColumn from '../components/search/SearchResultsColumn.vue'
 import NoteResultCard from '../components/search/NoteResultCard.vue'
@@ -74,6 +82,7 @@ import FlashcardResultCard from '../components/search/FlashcardResultCard.vue'
 import type { SearchNotesResult, SearchFlashcardsResult } from '../api/types'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 // State
 const lastSearchTerm = ref('')
@@ -82,8 +91,22 @@ const hasSearched = ref(false)
 const searchError = ref<string | null>(null)
 const notesResults = ref<SearchNotesResult[]>([])
 const flashcardsResults = ref<SearchFlashcardsResult[]>([])
+const followedItems = ref<Set<string>>(new Set())
 
 // Methods
+const loadFollowedItems = async () => {
+  if (!userStore.userId) return
+  
+  try {
+    const response = await FollowingAPI.getFollowedItems({ user: userStore.userId })
+    if (response.data) {
+      followedItems.value = new Set(response.data)
+    }
+  } catch (error) {
+    console.error('Failed to load followed items:', error)
+  }
+}
+
 const handleSearch = async (searchTerm: string) => {
   isSearching.value = true
   hasSearched.value = true
@@ -102,7 +125,7 @@ const handleSearch = async (searchTerm: string) => {
     if (notesResponse.error) {
       searchError.value = `Notes search error: ${notesResponse.error}`
     } else if (notesResponse.data) {
-      notesResults.value = notesResponse.data
+      notesResults.value = notesResponse.data.filter(item => item.note.notesOwner != userStore.userId)
     }
 
     if (flashcardsResponse.error) {
@@ -112,7 +135,7 @@ const handleSearch = async (searchTerm: string) => {
         searchError.value = `Flashcards search error: ${flashcardsResponse.error}`
       }
     } else if (flashcardsResponse.data) {
-      flashcardsResults.value = flashcardsResponse.data
+      flashcardsResults.value = flashcardsResponse.data.filter(item => item.flashcardSet.setOwner != userStore.userId)
     }
   } catch (error) {
     searchError.value = 'An unexpected error occurred during search'
@@ -137,6 +160,97 @@ const viewFlashcardSet = (flashcardSet: SearchFlashcardsResult['flashcardSet']) 
     query: { user: flashcardSet.setOwner }
   })
 }
+
+const handleFollowNote = async (noteId: string) => {
+  if (!userStore.userId) {
+    searchError.value = 'You must be logged in to follow items'
+    return
+  }
+  
+  try {
+    const response = await FollowingAPI.follow({
+      user: userStore.userId,
+      item: noteId
+    })
+    
+    if (response.error) {
+      searchError.value = `Failed to follow note: ${response.error}`
+    } else {
+      followedItems.value.add(noteId)
+    }
+  } catch (error) {
+    searchError.value = 'An error occurred while following the note'
+    console.error('Follow error:', error)
+  }
+}
+
+const handleUnfollowNote = async (noteId: string) => {
+  if (!userStore.userId) return
+  
+  try {
+    const response = await FollowingAPI.unfollow({
+      user: userStore.userId,
+      item: noteId
+    })
+    
+    if (response.error) {
+      searchError.value = `Failed to unfollow note: ${response.error}`
+    } else {
+      followedItems.value.delete(noteId)
+    }
+  } catch (error) {
+    searchError.value = 'An error occurred while unfollowing the note'
+    console.error('Unfollow error:', error)
+  }
+}
+
+const handleFollowFlashcard = async (flashcardId: string) => {
+  if (!userStore.userId) {
+    searchError.value = 'You must be logged in to follow items'
+    return
+  }
+  
+  try {
+    const response = await FollowingAPI.follow({
+      user: userStore.userId,
+      item: flashcardId
+    })
+    
+    if (response.error) {
+      searchError.value = `Failed to follow flashcard: ${response.error}`
+    } else {
+      followedItems.value.add(flashcardId)
+    }
+  } catch (error) {
+    searchError.value = 'An error occurred while following the flashcard'
+    console.error('Follow error:', error)
+  }
+}
+
+const handleUnfollowFlashcard = async (flashcardId: string) => {
+  if (!userStore.userId) return
+  
+  try {
+    const response = await FollowingAPI.unfollow({
+      user: userStore.userId,
+      item: flashcardId
+    })
+    
+    if (response.error) {
+      searchError.value = `Failed to unfollow flashcard: ${response.error}`
+    } else {
+      followedItems.value.delete(flashcardId)
+    }
+  } catch (error) {
+    searchError.value = 'An error occurred while unfollowing the flashcard'
+    console.error('Unfollow error:', error)
+  }
+}
+
+// Load followed items on mount
+onMounted(() => {
+  loadFollowedItems()
+})
 </script>
 
 <style scoped>
