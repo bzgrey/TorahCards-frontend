@@ -29,7 +29,7 @@
             </div>
             <button 
               class="btn-unfollow" 
-              @click.stop="$emit('unfollow-note', note.id)"
+              @click.stop="$emit('unfollow-note', note._id);"
               title="Unfollow this note"
             >
               ✕
@@ -62,7 +62,7 @@
             </div>
             <button 
               class="btn-unfollow" 
-              @click.stop="$emit('unfollow-flashcard', flashcard.id)"
+              @click.stop="$emit('unfollow-flashcard', flashcard._id)"
               title="Unfollow this flashcard set"
             >
               ✕

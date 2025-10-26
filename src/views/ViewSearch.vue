@@ -100,7 +100,10 @@ const loadFollowedItems = async () => {
   try {
     const response = await FollowingAPI.getFollowedItems({ user: userStore.userId })
     if (response.data) {
-      followedItems.value = new Set(response.data)
+      followedItems.value = response.data.reduce((set, item) => {
+        set.add(item.item)
+        return set
+      }, new Set<string>()) 
     }
   } catch (error) {
     console.error('Failed to load followed items:', error)

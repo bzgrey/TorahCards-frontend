@@ -67,7 +67,7 @@
         </div>
       </section>
 
-      <!-- Following Section (Placeholder) -->
+      <!-- Following Section-->
       <FollowingSection
         :followed-notes="followedNotes"
         :followed-flashcards="followedFlashcards"
@@ -313,15 +313,13 @@ const fetchFollowedItems = async () => {
       followingLoading.value = false
       return
     }
-    
+
     const itemIds = followedItemsResult.data.map(item => item.item)
-    
     // Fetch notes and flashcards info in parallel
     const [notesResult, flashcardsResult] = await Promise.all([
       NotesAPI.getNotesInfo({ noteIDs: itemIds }),
-      FlashCardsAPI.getFlashcardInfo({ flashcardsIDs: itemIds })
+      FlashCardsAPI.getFlashcardInfo({ flashcardIDs: itemIds })
     ])
-    
     if (notesResult.error) {
       console.error('Error fetching followed notes:', notesResult.error)
     } else if (notesResult.data) {
@@ -332,6 +330,7 @@ const fetchFollowedItems = async () => {
       console.error('Error fetching followed flashcards:', flashcardsResult.error)
     } else if (flashcardsResult.data) {
       followedFlashcards.value = flashcardsResult.data
+      console.log('Fetched followed flashcards:', followedFlashcards.value)
     }
   } catch (error) {
     followingError.value = 'Failed to load followed items'
@@ -343,7 +342,8 @@ const fetchFollowedItems = async () => {
 
 const handleUnfollowNote = async (noteId: string) => {
   if (!userStore.userId) return
-  
+  console.log('Unfollowing Note with ID:', noteId)
+
   try {
     const result = await FollowingAPI.unfollow({
       user: userStore.userId,
@@ -354,7 +354,7 @@ const handleUnfollowNote = async (noteId: string) => {
       alert(`Failed to unfollow note: ${result.error}`)
     } else {
       // Remove from local list
-      followedNotes.value = followedNotes.value.filter(note => note.id !== noteId)
+      followedNotes.value = followedNotes.value.filter(note => note._id !== noteId)
     }
   } catch (error) {
     alert('An error occurred while unfollowing the note')
@@ -364,7 +364,6 @@ const handleUnfollowNote = async (noteId: string) => {
 
 const handleUnfollowFlashcard = async (flashcardId: string) => {
   if (!userStore.userId) return
-  
   try {
     const result = await FollowingAPI.unfollow({
       user: userStore.userId,
@@ -375,7 +374,7 @@ const handleUnfollowFlashcard = async (flashcardId: string) => {
       alert(`Failed to unfollow flashcard: ${result.error}`)
     } else {
       // Remove from local list
-      followedFlashcards.value = followedFlashcards.value.filter(fc => fc.id !== flashcardId)
+      followedFlashcards.value = followedFlashcards.value.filter(fc => fc._id !== flashcardId)
     }
   } catch (error) {
     alert('An error occurred while unfollowing the flashcard')

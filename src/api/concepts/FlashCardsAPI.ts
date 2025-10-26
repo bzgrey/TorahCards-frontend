@@ -143,13 +143,13 @@ export const FlashCardsAPI = {
   /**
    * Retrieves a Flashcards object corresponding to a given Flashcards ID
    */
-  async getFlashcardInfo(request: GetFlashcardInfoRequest): Promise<ApiResponse<GetFlashcardInfoResponse>> {
+  async getFlashcardInfo(request: GetFlashcardInfoRequest): Promise<ApiResponse<GetFlashcardInfoResponse[]>> {
     try {
       const response: AxiosResponse<GetFlashcardInfoResponse[]> = await api.post(
         '/api/FlashCards/_getFlashcardInfo',
         request
       )
-      return { data: response.data[0] }
+      return { data: response.data }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         return { error: error.response?.data?.error || 'Failed to get flashcard info' }
