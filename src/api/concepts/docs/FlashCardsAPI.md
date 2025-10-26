@@ -272,3 +272,54 @@
   "error": "string"
 }
 ```
+---
+
+### POST /api/FlashCards/\_getFlashcardInfo
+
+**Description:** Retrieves a Flashcards object corresponding to a given Flashcards ID.
+
+**Requirements:**
+
+* Nothing
+
+**Effects:**
+
+* returns array contain a Flashcards object corresponding to given id
+
+**Request Body:**
+
+```json
+{
+  "flashcardIDs": [
+    "string"
+  ]
+}
+```
+
+**Success Response Body (Query):**
+
+```json
+[
+  {
+	"id": "string",
+    "user": "string",
+    "name": "string",
+    "cards": [
+      {
+        "question": "string",
+        "answer": "string"
+      }
+    ]
+  }
+]
+```
+
+**Error Response Body:**
+
+```json
+{
+  "error": "string"
+}
+```
+
+---

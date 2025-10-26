@@ -62,6 +62,17 @@ export interface SearchFlashcardsResult {
     score: number
 }
 
+export interface GetFlashcardInfoRequest {
+  flashcardsIDs: string[]
+}
+
+export interface GetFlashcardInfoResponse {
+  id: string
+  user: string
+  name: string
+  cards: Card[]
+}
+
 export interface ApiResponse<T = void> {
   data?: T
   error?: string
@@ -118,6 +129,17 @@ export interface SearchNotesResult {
     content: string
   }
   score: number
+}
+
+export interface GetNotesInfoRequest {
+  noteIDs: string[]
+}
+
+export interface GetNotesInfoResponse {
+  id: string
+  user: string
+  name: string
+  content: string
 }
 
 // Labeling types
@@ -201,5 +223,24 @@ export interface GetAuthenticatedUserRequest {
 
 export interface GetAuthenticatedUserResponse {
   user: string
+}
+
+// Following types
+export interface FollowRequest {
+  user: string
+  item: string
+}
+
+export interface UnfollowRequest {
+  user: string
+  item: string
+}
+
+export interface GetFollowedItemsRequest {
+  user: string
+}
+
+export interface GetFollowedItemsResponse {
+  items: string[]
 }
 
