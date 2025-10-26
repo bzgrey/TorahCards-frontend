@@ -4,7 +4,7 @@
       <div class="result-header">
         <h3 class="result-name">{{ note.name }}</h3>
       </div>
-      <div class="result-owner">by {{ note.notesOwner }}</div>
+      <div class="result-owner">by {{ ownerUsername || note.notesOwner }}</div>
       <div class="result-preview">{{ getPreview(note.content) }}</div>
     </div>
     <div class="card-actions">
@@ -37,6 +37,18 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const isLoading = ref(false)
+const ownerUsername = ref<string | null>(null)
+
+// Fetch the owner's username when component mounts
+onMounted(async () => {
+  const response = await UserAuthAPI.getUsernames({
+    users: [props.flashcardSet.setOwner]
+  })
+  
+  if (response.data && response.data.length > 0) {
+    ownerUsername.value = response.data[0].username
+  }
+})
 
 const getPreview = (content: string) => {
   if (!content) return 'Empty content'

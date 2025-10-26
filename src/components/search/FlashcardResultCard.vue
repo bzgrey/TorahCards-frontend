@@ -5,7 +5,7 @@
         <h3 class="result-name">{{ flashcardSet.name }}</h3>
         <span class="card-count">{{ flashcardSet.cards.length }} cards</span>
       </div>
-      <div class="result-owner">by {{ flashcardSet.setOwner }}</div>
+      <div class="result-owner">by {{ ownerUsername || flashcardSet.setOwner }}</div>
       <div class="result-preview">
         {{ flashcardSet.cards.length > 0 ? getCardsPreview(flashcardSet.cards) : 'Empty set' }}
       </div>
@@ -21,8 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import FollowButton from '../FollowButton.vue'
+import { UserAuthAPI } from '../../api/concepts/UserAuthAPI'
 import type { SearchFlashcardsResult, Card } from '../../api/types'
 
 interface Props {
@@ -40,6 +41,18 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const isLoading = ref(false)
+const ownerUsername = ref<string | null>(null)
+
+// Fetch the owner's username when component mounts
+onMounted(async () => {
+  const response = await UserAuthAPI.getUsernames({
+    users: [props.flashcardSet.setOwner]
+  })
+  
+  if (response.data && response.data.length > 0) {
+    ownerUsername.value = response.data[0].username
+  }
+})
 
 const getCardsPreview = (cards: Card[]) => {
   if (cards.length === 0) return 'No cards'

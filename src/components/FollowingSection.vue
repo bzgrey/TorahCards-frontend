@@ -24,7 +24,7 @@
           >
             <div class="item-content" @click="$emit('view-note', note)">
               <div class="item-name">{{ note.name }}</div>
-              <div class="item-owner">by {{ note.user }}</div>
+              <div class="item-owner">by {{ getUsernameDisplay(note.user) }}</div>
               <div class="item-preview">{{ getPreview(note.content) }}</div>
             </div>
             <button 
@@ -57,7 +57,7 @@
           >
             <div class="item-content" @click="$emit('view-flashcard', flashcard)">
               <div class="item-name">{{ flashcard.name }}</div>
-              <div class="item-owner">by {{ flashcard.user }}</div>
+              <div class="item-owner">by {{ getUsernameDisplay(flashcard.user) }}</div>
               <div class="item-count">{{ flashcard.cards?.length || 0 }} cards</div>
             </div>
             <button 
@@ -75,6 +75,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch, computed } from 'vue'
+import { UserAuthAPI } from '../api/concepts/UserAuthAPI'
 import type { GetNotesInfoResponse, GetFlashcardInfoResponse } from '../api/types'
 
 interface Props {
@@ -91,8 +93,56 @@ interface Emits {
   (e: 'unfollow-flashcard', flashcardId: string): void
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 defineEmits<Emits>()
+
+// Map to store usernames by user ID
+const usernameMap = ref<Record<string, string>>({})
+
+// Fetch usernames for all unique user IDs
+const fetchUsernames = async () => {
+  // Collect all unique user IDs from both notes and flashcards
+  const userIds = new Set<string>()
+  
+  props.followedNotes.forEach(note => {
+    if (note.user) userIds.add(note.user)
+  })
+  
+  props.followedFlashcards.forEach(flashcard => {
+    if (flashcard.user) userIds.add(flashcard.user)
+  })
+  
+  if (userIds.size === 0) return
+  
+  // Fetch usernames for all user IDs
+  const response = await UserAuthAPI.getUsernames({
+    users: Array.from(userIds)
+  })
+  
+  if (response.data) {
+    // Build a map of user ID to username
+    const newMap: Record<string, string> = {}
+    response.data.forEach((item, index) => {
+      const userId = Array.from(userIds)[index]
+      newMap[userId] = item.username
+    })
+    usernameMap.value = newMap
+  }
+}
+
+// Watch for changes in followed items and fetch usernames
+watch(
+  () => [props.followedNotes, props.followedFlashcards],
+  () => {
+    fetchUsernames()
+  },
+  { immediate: true, deep: true }
+)
+
+// Get username display (fallback to user ID if username not loaded)
+const getUsernameDisplay = (userId: string) => {
+  return usernameMap.value[userId] || userId
+}
 
 const getPreview = (content: string) => {
   if (!content) return 'Empty note'

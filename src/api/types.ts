@@ -67,7 +67,7 @@ export interface GetFlashcardInfoRequest {
 }
 
 export interface GetFlashcardInfoResponse {
-  id?: string
+  id: string
   user: string
   name: string
   cards: Card[]
@@ -136,7 +136,7 @@ export interface GetNotesInfoRequest {
 }
 
 export interface GetNotesInfoResponse {
-  id?: string
+  id: string
   user: string
   name: string
   content: string
