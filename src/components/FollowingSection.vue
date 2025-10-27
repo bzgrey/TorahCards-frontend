@@ -156,14 +156,18 @@ const getPreview = (content: string) => {
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .section-title {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   margin: 0 0 24px 0;
-  color: #333;
+  color: var(--accent-leather, #A67C52);
   font-size: 1.8rem;
-  border-bottom: 3px solid #007bff;
+  font-weight: 600;
+  border-bottom: 3px solid var(--border-gold, #CBBF7A);
   padding-bottom: 10px;
+  letter-spacing: -0.3px;
 }
 
 .content-grid {
@@ -173,8 +177,8 @@ const getPreview = (content: string) => {
 }
 
 .content-card {
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
+  background: white;
+  border: 2px solid var(--border-gold, #CBBF7A);
   border-radius: 8px;
   padding: 20px;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -182,7 +186,8 @@ const getPreview = (content: string) => {
 
 .content-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(166, 124, 82, 0.2);
+  border-color: var(--accent-leather, #A67C52);
 }
 
 .card-header {
@@ -193,18 +198,23 @@ const getPreview = (content: string) => {
 }
 
 .card-header h3 {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   margin: 0;
-  color: #007bff;
+  color: var(--accent-leather, #A67C52);
   font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .badge {
-  background: #007bff;
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
+  background: var(--accent-leather, #A67C52);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .loading-state,
@@ -225,8 +235,8 @@ const getPreview = (content: string) => {
 }
 
 .item {
-  background: white;
-  border: 1px solid #dee2e6;
+  background: var(--bg-parchment, #F8F5E9);
+  border: 1px solid var(--border-gold, #CBBF7A);
   border-radius: 6px;
   padding: 16px;
   cursor: pointer;
@@ -234,26 +244,31 @@ const getPreview = (content: string) => {
 }
 
 .item:hover {
-  border-color: #007bff;
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  border-color: var(--accent-leather, #A67C52);
+  box-shadow: 0 2px 8px rgba(166, 124, 82, 0.3);
   transform: translateX(4px);
 }
 
 .item-name {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   font-weight: 600;
-  color: #333;
+  color: var(--text-heading, #2B2B2B);
   margin-bottom: 6px;
   font-size: 1.1rem;
+  letter-spacing: -0.2px;
 }
 
 .item-preview {
-  color: #6c757d;
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
+  color: var(--text-body, #2F2F2F);
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.6;
+  opacity: 0.7;
 }
 
 .item-count {
-  color: #28a745;
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
+  color: var(--accent-leather, #A67C52);
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -271,7 +286,8 @@ const getPreview = (content: string) => {
 }
 
 .item-owner {
-  color: #6c757d;
+  font-family: var(--font-heading, 'EB Garamond', serif);
+  color: var(--text-quote, #5A5A5A);
   font-size: 0.85rem;
   font-style: italic;
   margin-bottom: 6px;
@@ -307,7 +323,8 @@ const getPreview = (content: string) => {
 }
 
 .following-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: white;
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 @media (max-width: 768px) {

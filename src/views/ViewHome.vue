@@ -423,15 +423,21 @@ onMounted(() => {
 }
 
 .header h1 {
-  color: #007bff;
+  font-family: var(--font-heading, 'EB Garamond', serif);
+  color: var(--accent-leather, #A67C52);
   margin: 0 0 10px 0;
   font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  color: #6c757d;
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
+  color: var(--text-body, #2F2F2F);
   font-size: 1.2rem;
   margin: 0;
+  opacity: 0.8;
+  line-height: 1.6;
 }
 
 .dashboard-container {
@@ -445,14 +451,18 @@ onMounted(() => {
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .section-title {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   margin: 0 0 24px 0;
-  color: #333;
+  color: var(--accent-leather, #A67C52);
   font-size: 1.8rem;
-  border-bottom: 3px solid #007bff;
+  font-weight: 600;
+  border-bottom: 3px solid var(--border-gold, #CBBF7A);
   padding-bottom: 10px;
+  letter-spacing: -0.3px;
 }
 
 .content-grid {
@@ -462,8 +472,8 @@ onMounted(() => {
 }
 
 .content-card {
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
+  background: white;
+  border: 2px solid var(--border-gold, #CBBF7A);
   border-radius: 8px;
   padding: 20px;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -471,7 +481,8 @@ onMounted(() => {
 
 .content-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(166, 124, 82, 0.2);
+  border-color: var(--accent-leather, #A67C52);
 }
 
 .card-header {
@@ -482,18 +493,23 @@ onMounted(() => {
 }
 
 .card-header h3 {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   margin: 0;
-  color: #007bff;
+  color: var(--accent-leather, #A67C52);
   font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .badge {
-  background: #007bff;
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
+  background: var(--accent-leather, #A67C52);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .loading-state,
@@ -514,8 +530,8 @@ onMounted(() => {
 }
 
 .item {
-  background: white;
-  border: 1px solid #dee2e6;
+  background: var(--bg-parchment, #F8F5E9);
+  border: 1px solid var(--border-gold, #CBBF7A);
   border-radius: 6px;
   padding: 16px;
   cursor: pointer;
@@ -523,31 +539,37 @@ onMounted(() => {
 }
 
 .item:hover {
-  border-color: #007bff;
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  border-color: var(--accent-leather, #A67C52);
+  box-shadow: 0 2px 8px rgba(166, 124, 82, 0.3);
   transform: translateX(4px);
 }
 
 .item-name {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   font-weight: 600;
-  color: #333;
+  color: var(--text-heading, #2B2B2B);
   margin-bottom: 6px;
   font-size: 1.1rem;
+  letter-spacing: -0.2px;
 }
 
 .item-preview {
-  color: #6c757d;
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
+  color: var(--text-body, #2F2F2F);
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.6;
+  opacity: 0.7;
 }
 
 .item-count {
-  color: #28a745;
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
+  color: var(--accent-leather, #A67C52);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
 .btn {
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
   padding: 12px 24px;
   border: none;
   border-radius: 6px;
@@ -555,6 +577,7 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 600;
   transition: all 0.2s;
+  letter-spacing: -0.5px;
 }
 
 .btn:hover:not(:disabled) {
@@ -568,26 +591,31 @@ onMounted(() => {
 }
 
 .btn-create {
-  background: #28a745;
+  background: var(--accent-leather, #A67C52);
   color: white;
   width: 100%;
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .btn-create-small {
-  background: #007bff;
-  color: white;
+  background: var(--highlight-subtle, #BAB9A1);
+  color: var(--text-charcoal, #2E2E2E);
   width: 100%;
   margin-top: 8px;
+  border: 2px solid var(--border-gold, #CBBF7A);
+  font-weight: 700;
 }
 
 .btn-primary {
-  background: #007bff;
+  background: var(--accent-leather, #A67C52);
   color: white;
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .btn-secondary {
-  background: #6c757d;
-  color: white;
+  background: var(--highlight-subtle, #BAB9A1);
+  color: var(--text-charcoal, #2E2E2E);
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 /* Modal Styles */
@@ -616,8 +644,11 @@ onMounted(() => {
 }
 
 .modal h2 {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   margin: 0 0 24px 0;
-  color: #007bff;
+  color: var(--accent-leather, #A67C52);
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .btn-close {
@@ -648,26 +679,32 @@ onMounted(() => {
 }
 
 .form-group label {
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-heading, #2B2B2B);
+  letter-spacing: -0.3px;
 }
 
 .text-input,
 .textarea-input {
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
   width: 100%;
   padding: 12px;
-  border: 2px solid #dee2e6;
+  border: 2px solid var(--border-gold, #CBBF7A);
   border-radius: 6px;
   font-size: 16px;
   transition: border-color 0.2s;
+  background: var(--bg-parchment, #F8F5E9);
+  color: var(--text-body, #2F2F2F);
+  line-height: 1.6;
 }
 
 .text-input:focus,
 .textarea-input:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: var(--accent-leather, #A67C52);
 }
 
 .textarea-input {

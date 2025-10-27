@@ -87,7 +87,7 @@ const handleFollowToggle = async () => {
 <style scoped>
 .result-card {
   background: white;
-  border: 2px solid #dee2e6;
+  border: 2px solid var(--border-gold, #CBBF7A);
   border-radius: 8px;
   padding: 20px;
   transition: all 0.2s;
@@ -97,8 +97,8 @@ const handleFollowToggle = async () => {
 }
 
 .result-card:hover {
-  border-color: #007bff;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+  border-color: var(--accent-leather, #A67C52);
+  box-shadow: 0 4px 12px rgba(166, 124, 82, 0.3);
   transform: translateY(-2px);
 }
 
@@ -115,38 +115,46 @@ const handleFollowToggle = async () => {
 }
 
 .result-name {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   margin: 0;
-  color: #333;
+  color: var(--text-heading, #2B2B2B);
   font-size: 1.3rem;
   flex: 1;
+  font-weight: 600;
+  letter-spacing: -0.2px;
 }
 
 .card-count {
-  background: #17a2b8;
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
+  background: var(--accent-leather, #A67C52);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .result-owner {
-  color: #6c757d;
+  font-family: var(--font-heading, 'EB Garamond', serif);
+  color: var(--text-quote, #5A5A5A);
   font-size: 0.95rem;
   margin-bottom: 12px;
   font-style: italic;
 }
 
 .result-preview {
-  color: #495057;
-  line-height: 1.5;
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
+  color: var(--text-body, #2F2F2F);
+  line-height: 1.6;
   font-size: 1rem;
+  opacity: 0.8;
 }
 
 .card-actions {
   display: flex;
   justify-content: flex-end;
   padding-top: 8px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--border-gold, #CBBF7A);
 }
 </style>

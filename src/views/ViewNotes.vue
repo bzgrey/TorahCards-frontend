@@ -278,10 +278,10 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: #007bff;
+  background: var(--accent-leather, #A67C52);
   color: white;
   padding: 12px 24px;
-  border: none;
+  border: 2px solid var(--border-gold, #CBBF7A);
   border-radius: 6px;
   text-decoration: none;
   display: inline-block;
@@ -321,13 +321,19 @@ onMounted(() => {
 }
 
 .flashcards-modal h2 {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   margin: 0 0 8px 0;
-  color: #007bff;
+  color: var(--accent-leather, #A67C52);
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .modal-subtitle {
-  color: #6c757d;
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
+  color: var(--text-body, #2F2F2F);
   margin: 0 0 24px 0;
+  opacity: 0.8;
+  line-height: 1.6;
 }
 
 .flashcards-preview {
@@ -337,31 +343,36 @@ onMounted(() => {
 }
 
 .flashcard-preview-item {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  background: var(--bg-parchment, #F8F5E9);
+  border: 1px solid var(--border-gold, #CBBF7A);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 12px;
 }
 
 .card-number {
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
   font-size: 12px;
   font-weight: 600;
-  color: #007bff;
+  color: var(--accent-leather, #A67C52);
   margin-bottom: 8px;
+  letter-spacing: -0.3px;
+  text-transform: uppercase;
 }
 
 .card-content {
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .card-q {
   margin-bottom: 8px;
-  color: #333;
+  color: var(--text-heading, #2B2B2B);
 }
 
 .card-a {
-  color: #28a745;
+  color: var(--accent-leather, #A67C52);
 }
 
 .modal-actions {
@@ -369,7 +380,7 @@ onMounted(() => {
   flex-direction: column;
   gap: 12px;
   padding-top: 20px;
-  border-top: 2px solid #e9ecef;
+  border-top: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .btn-close {
@@ -421,19 +432,22 @@ onMounted(() => {
 }
 
 .btn-save {
-  background: #007bff;
+  background: var(--accent-leather, #A67C52);
   color: white;
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .btn-cancel {
-  background: #6c757d;
-  color: white;
+  background: var(--highlight-subtle, #BAB9A1);
+  color: var(--text-charcoal, #2E2E2E);
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .btn-retry {
-  background: #007bff;
+  background: var(--accent-leather, #A67C52);
   color: white;
   margin-top: 20px;
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 @media (max-width: 768px) {

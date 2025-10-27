@@ -269,15 +269,21 @@ onMounted(() => {
 }
 
 .header h1 {
-  color: #007bff;
+  font-family: var(--font-heading, 'EB Garamond', serif);
+  color: var(--accent-leather, #A67C52);
   margin: 0 0 10px 0;
   font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  color: #6c757d;
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
+  color: var(--text-body, #2F2F2F);
   font-size: 1.2rem;
   margin: 0;
+  opacity: 0.8;
+  line-height: 1.6;
 }
 
 .search-container {
@@ -285,17 +291,21 @@ onMounted(() => {
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-gold, #CBBF7A);
 }
 
 .results-summary {
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
   text-align: center;
   padding: 16px;
-  background: #e7f3ff;
+  background: var(--bg-parchment, #F8F5E9);
   border-radius: 8px;
   margin-bottom: 24px;
-  color: #004085;
+  color: var(--accent-leather, #A67C52);
   font-weight: 600;
   font-size: 1.1rem;
+  border: 2px solid var(--border-gold, #CBBF7A);
+  line-height: 1.6;
 }
 
 .error-message {
@@ -325,15 +335,21 @@ onMounted(() => {
 }
 
 .initial-state h2 {
-  color: #007bff;
+  font-family: var(--font-heading, 'EB Garamond', serif);
+  color: var(--accent-leather, #A67C52);
   margin: 0 0 16px 0;
   font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .initial-state p {
-  color: #6c757d;
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
+  color: var(--text-body, #2F2F2F);
   font-size: 1.2rem;
   margin: 0;
+  opacity: 0.7;
+  line-height: 1.6;
 }
 
 @media (max-width: 1024px) {

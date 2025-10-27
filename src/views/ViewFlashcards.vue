@@ -274,10 +274,10 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: #007bff;
+  background: var(--accent-leather, #A67C52);
   color: white;
   padding: 12px 24px;
-  border: none;
+  border: 2px solid var(--border-gold, #CBBF7A);
   border-radius: 6px;
   text-decoration: none;
   display: inline-block;
@@ -301,9 +301,12 @@ onMounted(() => {
 }
 
 .set-title {
-  color: #007bff;
+  font-family: var(--font-heading, 'EB Garamond', serif);
+  color: var(--accent-leather, #A67C52);
   margin: 0;
   font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .view-mode-buttons {
@@ -312,23 +315,27 @@ onMounted(() => {
 }
 
 .btn-view-mode {
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
   padding: 10px 20px;
-  border: 2px solid #007bff;
+  border: 2px solid var(--accent-leather, #A67C52);
   background: white;
-  color: #007bff;
+  color: var(--accent-leather, #A67C52);
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
   transition: all 0.2s;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
 }
 
 .btn-view-mode:hover {
-  background: #e7f3ff;
+  background: var(--bg-parchment, #F8F5E9);
 }
 
 .btn-view-mode.active {
-  background: #007bff;
+  background: var(--accent-leather, #A67C52);
   color: white;
 }
 
@@ -344,11 +351,14 @@ onMounted(() => {
 }
 
 .card-counter {
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
   text-align: center;
   font-size: 18px;
-  color: #6c757d;
+  color: var(--text-body, #2F2F2F);
   margin-bottom: 20px;
   font-weight: 600;
+  opacity: 0.8;
+  letter-spacing: -0.3px;
 }
 
 /* Flashcard with Flip Animation */
@@ -388,17 +398,20 @@ onMounted(() => {
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-leather, #A67C52) 0%, #8B6640 100%);
   color: white;
+  border: 3px solid var(--border-gold, #CBBF7A);
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--highlight-subtle, #BAB9A1) 0%, #A0A089 100%);
+  color: var(--text-charcoal, #2E2E2E);
   transform: rotateY(180deg);
+  border: 3px solid var(--border-gold, #CBBF7A);
 }
 
 .card-label {
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
   position: absolute;
   top: 20px;
   left: 30px;
@@ -406,10 +419,11 @@ onMounted(() => {
   font-weight: 600;
   text-transform: uppercase;
   opacity: 0.8;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .card-content {
+  font-family: var(--font-body, 'Noto Sans', sans-serif);
   font-size: 28px;
   line-height: 1.6;
   text-align: center;
@@ -420,6 +434,7 @@ onMounted(() => {
 }
 
 .flip-hint {
+  font-family: var(--font-heading, 'EB Garamond', serif);
   position: absolute;
   bottom: 20px;
   font-size: 14px;
@@ -435,35 +450,39 @@ onMounted(() => {
 }
 
 .btn-nav {
+  font-family: var(--font-ui, 'Noto Sans', sans-serif);
   padding: 15px 40px;
   font-size: 18px;
   font-weight: 600;
-  border: none;
+  border: 2px solid var(--border-gold, #CBBF7A);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  background: #007bff;
+  background: var(--accent-leather, #A67C52);
   color: white;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
 }
 
 .btn-nav:hover:not(:disabled) {
-  background: #0056b3;
+  background: #8B6640;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(166, 124, 82, 0.3);
 }
 
 .btn-nav:disabled {
-  background: #6c757d;
+  background: var(--highlight-subtle, #BAB9A1);
   cursor: not-allowed;
   opacity: 0.5;
 }
 
 .btn-prev {
-  background: #6c757d;
+  background: var(--highlight-subtle, #BAB9A1);
+  color: var(--text-charcoal, #2E2E2E);
 }
 
 .btn-prev:hover:not(:disabled) {
-  background: #5a6268;
+  background: #A0A089;
 }
 
 @media (max-width: 768px) {
