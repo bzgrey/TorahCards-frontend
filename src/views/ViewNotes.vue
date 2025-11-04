@@ -98,7 +98,7 @@ const handleUpdate = async (name: string, content: string) => {
     error.value = null
     
     // Remove old note
-    const removeResult = await NotesAPI.removeNotes({ user: userStore.userId, name })
+    const removeResult = await NotesAPI.removeNotes({ user: userStore.userId, name, token: userStore.token })
     if (removeResult.error) {
       error.value = removeResult.error
       alert(`Error updating note: ${removeResult.error}`)
@@ -106,7 +106,7 @@ const handleUpdate = async (name: string, content: string) => {
     }
     
     // Add updated note
-    const addResult = await NotesAPI.addNotes({ user: userStore.userId, name, content })
+    const addResult = await NotesAPI.addNotes({ token: userStore.token, user: userStore.userId, name, content })
     if (addResult.error) {
       error.value = addResult.error
       alert(`Error updating note: ${addResult.error}`)
@@ -127,7 +127,7 @@ const handleDelete = async () => {
   
   try {
     loading.value = true
-    const result = await NotesAPI.removeNotes({ user: userStore.userId, name: noteName.value })
+    const result = await NotesAPI.removeNotes({ user: userStore.userId, name: noteName.value, token: userStore.token })
     
     if (result.error) {
       alert(`Error: ${result.error}`)
@@ -151,14 +151,14 @@ const handleUpdateName = async (newName: string) => {
     loading.value = true
     
     // Add new note
-    const addResult = await NotesAPI.addNotes({ user: userStore.userId, name: newName, content })
+    const addResult = await NotesAPI.addNotes({ user: userStore.userId, name: newName, content, token: userStore.token })
     if (addResult.error) {
       alert(`Error: ${addResult.error}`)
       return
     }
     
     // Remove old note
-    const removeResult = await NotesAPI.removeNotes({ user: userStore.userId, name: oldName })
+    const removeResult = await NotesAPI.removeNotes({ user: userStore.userId, name: oldName, token: userStore.token })
     if (removeResult.error) {
       alert(`Error: ${removeResult.error}`)
       return
@@ -178,10 +178,11 @@ const handleConvertToFlashcards = async () => {
 
   loading.value = true
   const result = await NotesAPI.notesToFlashCards({
+    token: userStore.token,
     user: userStore.userId,
     name: noteName.value
   })
-  console.log(result);
+
   if (result.error) {
     alert(`Error: ${result.error}`)
   } else if (result.data?.cards && result.data.cards.length > 0) {
@@ -200,6 +201,7 @@ const handleSaveFlashcards = async () => {
   
   savingFlashcards.value = true
   const result = await FlashCardsAPI.addFlashCards({
+    token: userStore.token,
     user: userStore.userId,
     name: flashcardSetName.value.trim(),
     cards: generatedFlashcards.value

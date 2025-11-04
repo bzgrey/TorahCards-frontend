@@ -16,17 +16,20 @@ export interface User {
 }
 
 export interface AddFlashCardsRequest {
+  token: string
   user: string
   name: string
   cards: Card[]
 }
 
 export interface RemoveFlashCardsRequest {
+  token: string
   user: string
   name: string
 }
 
 export interface AddCardRequest {
+  token: string
   user: string
   name: string
   question: string
@@ -34,6 +37,7 @@ export interface AddCardRequest {
 }
 
 export interface RemoveCardRequest {
+  token: string
   user: string
   name: string
   card: Card
@@ -85,6 +89,7 @@ export interface Notes {
 }
 
 export interface AddNotesRequest {
+  token: string
   user: string
   name: string
   content: string
@@ -93,9 +98,11 @@ export interface AddNotesRequest {
 export interface RemoveNotesRequest {
   user: string
   name: string
+  token: string
 }
 
 export interface NotesToFlashCardsRequest {
+  token: string
   user: string
   name: string
 }
@@ -144,28 +151,34 @@ export interface GetNotesInfoResponse {
 
 // Labeling types
 export interface CreateLabelRequest {
+  token: string
   name: string
 }
 
 export interface AddLabelRequest {
+  token: string
   item: string
   labelName: string
 }
 
 export interface DeleteLabelRequest {
+  token: string
   item: string
   labelName: string
 }
 
 export interface DeleteItemRequest {
+  token: string
   item: string
 }
 
 export interface GetLabelItemsRequest {
+  token: string
   labelName: string
 }
 
 export interface GetItemLabelsRequest {
+  token: string
   item: string
 }
 
@@ -210,6 +223,7 @@ export interface GetUsernamesResponse {
 }
 
 export interface GetPasswordRequest {
+  token: string
   user: string
 }
 
@@ -227,16 +241,19 @@ export interface GetAuthenticatedUserResponse {
 
 // Following types
 export interface FollowRequest {
+  token: string
   user: string
   item: string
 }
 
 export interface UnfollowRequest {
+  token: string
   user: string
   item: string
 }
 
 export interface GetFollowedItemsRequest {
+  token: string
   user: string
 }
 

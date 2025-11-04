@@ -163,6 +163,7 @@ const handleSave = async (name: string, updatedCards: Card[]) => {
     
     // Remove the old set
     const removeResult = await FlashCardsAPI.removeFlashCards({
+      token: userStore.token,
       user: userStore.userId,
       name: setName.value
     })
@@ -174,6 +175,7 @@ const handleSave = async (name: string, updatedCards: Card[]) => {
     
     // Add the updated set
     const addResult = await FlashCardsAPI.addFlashCards({
+      token: userStore.token,
       user: userStore.userId,
       name,
       cards: updatedCards
@@ -198,6 +200,7 @@ const handleDelete = async () => {
   try {
     loading.value = true
     const result = await FlashCardsAPI.removeFlashCards({
+      token: userStore.token,
       user: userStore.userId,
       name: setName.value
     })

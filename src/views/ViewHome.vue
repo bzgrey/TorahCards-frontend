@@ -250,6 +250,7 @@ const handleCreateNote = async () => {
   
   notesLoading.value = true
   const result = await NotesAPI.addNotes({
+    token: userStore.token,
     user: userStore.userId,
     name: newNoteName.value.trim(),
     content: newNoteContent.value
@@ -273,6 +274,7 @@ const handleCreateFlashcardSet = async () => {
   
   flashcardsLoading.value = true
   const result = await FlashCardsAPI.addFlashCards({
+    token: userStore.token,
     user: userStore.userId,
     name: newSetName.value.trim(),
     cards: []
@@ -299,22 +301,21 @@ const fetchFollowedItems = async () => {
   
   try {
     // Get list of followed item IDs
-    const followedItemsResult = await FollowingAPI.getFollowedItems({ user: userStore.userId })
-    
+    const followedItemsResult = await FollowingAPI.getFollowedItems({ token: userStore.token, user: userStore.userId })
     if (followedItemsResult.error) {
       followingError.value = followedItemsResult.error
       followingLoading.value = false
       return
     }
     
-    if (!followedItemsResult.data || followedItemsResult.data.length === 0) {
+    if (!followedItemsResult.data || followedItemsResult.data.results.length === 0) {
       followedNotes.value = []
       followedFlashcards.value = []
       followingLoading.value = false
       return
     }
-
-    const itemIds = followedItemsResult.data.map(item => item.item)
+    console.log('Followed items:', followedItemsResult)
+    const itemIds = followedItemsResult.data.results.map(item => item.item)
     // Fetch notes and flashcards info in parallel
     const [notesResult, flashcardsResult] = await Promise.all([
       NotesAPI.getNotesInfo({ noteIDs: itemIds }),
@@ -346,6 +347,7 @@ const handleUnfollowNote = async (noteId: string) => {
 
   try {
     const result = await FollowingAPI.unfollow({
+      token: userStore.token,
       user: userStore.userId,
       item: noteId
     })
@@ -366,6 +368,7 @@ const handleUnfollowFlashcard = async (flashcardId: string) => {
   if (!userStore.userId) return
   try {
     const result = await FollowingAPI.unfollow({
+      token: userStore.token,
       user: userStore.userId,
       item: flashcardId
     })

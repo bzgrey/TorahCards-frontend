@@ -623,6 +623,16 @@
       "npm:vite@5",
       "npm:vue-router@^4.3.0",
       "npm:vue@^3.4.0"
-    ]
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:@vitejs/plugin-vue@5",
+        "npm:axios@^1.6.0",
+        "npm:pinia@^2.1.0",
+        "npm:vite@5",
+        "npm:vue-router@^4.3.0",
+        "npm:vue@^3.4.0"
+      ]
+    }
   }
 }

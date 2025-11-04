@@ -98,9 +98,9 @@ const loadFollowedItems = async () => {
   if (!userStore.userId) return
   
   try {
-    const response = await FollowingAPI.getFollowedItems({ user: userStore.userId })
+    const response = await FollowingAPI.getFollowedItems({ token: userStore.token, user: userStore.userId })
     if (response.data) {
-      followedItems.value = response.data.reduce((set, item) => {
+      followedItems.value = response.data.results.reduce((set, item) => {
         set.add(item.item)
         return set
       }, new Set<string>()) 
@@ -172,6 +172,7 @@ const handleFollowNote = async (noteId: string) => {
   
   try {
     const response = await FollowingAPI.follow({
+      token: userStore.token,
       user: userStore.userId,
       item: noteId
     })
@@ -192,6 +193,7 @@ const handleUnfollowNote = async (noteId: string) => {
   
   try {
     const response = await FollowingAPI.unfollow({
+      token: userStore.token,
       user: userStore.userId,
       item: noteId
     })
@@ -215,6 +217,7 @@ const handleFollowFlashcard = async (flashcardId: string) => {
   
   try {
     const response = await FollowingAPI.follow({
+      token: userStore.token,
       user: userStore.userId,
       item: flashcardId
     })
@@ -235,6 +238,7 @@ const handleUnfollowFlashcard = async (flashcardId: string) => {
   
   try {
     const response = await FollowingAPI.unfollow({
+      token: userStore.token,
       user: userStore.userId,
       item: flashcardId
     })

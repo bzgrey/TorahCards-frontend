@@ -66,6 +66,7 @@ export const FollowingAPI = {
         '/api/Following/_getFollowedItems',
         request
       )
+      console.log('GetFollowedItems response:', response)
       return { data: response.data }
     } catch (error) {
       if (axios.isAxiosError(error)) {
