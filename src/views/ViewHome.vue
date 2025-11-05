@@ -314,7 +314,6 @@ const fetchFollowedItems = async () => {
       followingLoading.value = false
       return
     }
-    console.log('Followed items:', followedItemsResult)
     const itemIds = followedItemsResult.data.results.map(item => item.item)
     // Fetch notes and flashcards info in parallel
     const [notesResult, flashcardsResult] = await Promise.all([
@@ -331,7 +330,6 @@ const fetchFollowedItems = async () => {
       console.error('Error fetching followed flashcards:', flashcardsResult.error)
     } else if (flashcardsResult.data) {
       followedFlashcards.value = flashcardsResult.data
-      console.log('Fetched followed flashcards:', followedFlashcards.value)
     }
   } catch (error) {
     followingError.value = 'Failed to load followed items'
@@ -343,7 +341,6 @@ const fetchFollowedItems = async () => {
 
 const handleUnfollowNote = async (noteId: string) => {
   if (!userStore.userId) return
-  console.log('Unfollowing Note with ID:', noteId)
 
   try {
     const result = await FollowingAPI.unfollow({
